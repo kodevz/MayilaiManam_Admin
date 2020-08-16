@@ -1,17 +1,15 @@
 {
   "name": "sb-admin-bs4-angular-8",
-  "version": "8.0.0",
+  "version": "1.0.0",
   "license": "Apache",
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "postinstall": "ng build --target=production",
-    "build": "ng build --prod",
-    "gitbuild": "ng build --prod --base-href /start-angular/SB-Admin-BS4-Angular-7/master/dist/",
+    "build": "ng build",
     "test": "ng test",
-    "test-ci": "TEST_CI=true ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "postinstall": "ng build --prod"
   },
   "private": true,
   "dependencies": {
