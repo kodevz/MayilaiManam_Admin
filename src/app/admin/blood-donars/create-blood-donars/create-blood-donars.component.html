@@ -1,0 +1,75 @@
+
+<section>
+    <form [formGroup]="bloodDonarForm">
+
+        <mat-accordion class="example-headers-align">
+            <mat-expansion-panel [expanded]="expand">
+                <mat-expansion-panel-header (click)="expand=!expand">
+
+                    <mat-panel-description>
+                        <h5><strong>Create Blood Donars</strong></h5>
+                        <mat-icon>account_circle</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="row d-flex flex-row justify-content-center">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <h5>Donar Details</h5>
+                    </div>
+
+                    <div class="col-4">
+                        <mat-form-field [style.width.%]="100">
+                            <input matInput placeholder="Donar Name" formControlName="donar_name">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-4">
+                        <mat-form-field [style.width.%]="100">
+                            <input matInput placeholder="Donar Code" formControlName="donar_code" readonly>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-4">
+                        <mat-form-field [style.width.%]="100">
+                            <mat-label>Blood Group</mat-label>
+                            <mat-select formControlName="blood_group_id" name="blood_group_id">
+                                <mat-option *ngFor="let bloodGroup of bloodGroups$ | async" [value]="bloodGroup.id">
+                                    {{bloodGroup.blood_group}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-4">
+                        <mat-form-field [style.width.%]="100">
+                            <input matInput placeholder="Phone" formControlName="phone_number">
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-4">
+                        <mat-form-field [style.width.%]="100">
+                            <textarea matInput placeholder="Address" rows="5" formControlName="address"></textarea>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-4">
+                        <mat-form-field [style.width.%]="100">
+                            <mat-label>Status</mat-label>
+                            <mat-select formControlName="status">
+                                <mat-option *ngFor="let sts of ['Active', 'Inactive', 'Verified', 'Not Verified']"
+                                    [value]="sts">
+                                    {{ sts }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <mat-action-row>
+                    <button mat-button color="dark" (click)="bloodDonarForm.reset()">Reset</button>
+                    <button mat-button color="primary" (click)="expand=false;">Close</button>
+                    <button mat-raised-button color="primary" class="pull-right" (click)="createBloodDonar()" [disabled]="!bloodDonarForm.valid">
+                        Save
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+</section>

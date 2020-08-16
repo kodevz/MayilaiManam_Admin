@@ -1,0 +1,78 @@
+<section>
+    <form [formGroup]="categoryForm">
+
+        <mat-accordion class="example-headers-align">
+            <mat-expansion-panel [expanded]="expand">
+                <mat-expansion-panel-header class="expansion-header" (click)="expand=!expand">
+
+                    <mat-panel-description>
+                        <h5><strong>Create Category</strong></h5>
+                        <mat-icon>account_circle</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="row d-flex flex-row justify-content-center">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <h5>Category Details</h5>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-center">
+                        <mat-form-field [style.width.%]="100" class="col-4">
+                            <input matInput placeholder="Category Name" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <!-- <div class="col-12 d-flex justify-content-center">
+                        <mat-form-field [style.width.%]="100" class="col-4">
+                            <input matInput placeholder="Slug" formControlName="slug" readonly>
+                        </mat-form-field>
+                    </div> -->
+                    <div class="col-12 d-flex justify-content-center">
+                        <mat-checkbox formControlName="is_parent" class="col-4">
+                            Is Parent?
+                        </mat-checkbox>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center" *ngIf="!categoryForm.value.is_parent">
+                        <mat-form-field [style.width.%]="100" class="col-4">
+                            <mat-label>Select Parent </mat-label>
+                            <mat-select formControlName="parent_id" [(ngModel)]="categoryForm.value.parent_id">
+                                <mat-option *ngFor="let category of categories$ | async" [value]="category.id">
+                                    {{ category.id }} {{ category.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <img [src]="categoryForm.value.image"
+                            (error)="errorHandler($event, 'No Category Image Found')" width="500px" height="300px"
+                            alt="Category Image">
+                    </div>
+
+                    <div class="col-12  d-flex justify-content-center" style="padding:15px;">
+                        <button mat-button color="primary" (click)="categoryImage.click()">Choose Your Category
+                            Image</button>
+                        <input type="file" placeholder="Icon Image" #categoryImage (change)="onImageSelect($event)"
+                            hidden="true">
+                    </div>
+
+                    <div class="col-12  d-flex justify-content-center" style="padding:15px;">
+                        <img [src]="categoryForm.value.icon_image"
+                            (error)="errorHandler($event, 'No Icon Found')" width="75px" height="75px" alt="Icon Image">
+                        <button mat-button color="primary" (click)="categoryIcon.click()">Choose Your Category
+                            Icon</button>
+                        <input type="file" placeholder="Icon Image" #categoryIcon (change)="onIconSelect($event)"
+                            hidden="true">
+                    </div>
+                </div>
+                <mat-action-row>
+                    <button mat-button color="dark" (click)="categoryForm.reset()">Reset</button>
+                    <button mat-button color="primary" (click)="expand=false;">Close</button>
+                    <button mat-raised-button color="primary" class="pull-right" (click)="createCategory()" [disabled]="!categoryForm.valid">
+                        Save
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+</section>

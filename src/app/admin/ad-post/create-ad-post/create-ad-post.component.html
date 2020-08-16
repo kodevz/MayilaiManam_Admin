@@ -1,0 +1,86 @@
+<section>
+    <form [formGroup]="adPostForm">
+
+        <mat-accordion class="example-headers-align">
+            <mat-expansion-panel [expanded]="expand">
+                <mat-expansion-panel-header (click)="expand=!expand">
+
+                    <mat-panel-description>
+                        <h5><strong>Create New Ad</strong></h5>
+                        <mat-icon>account_circle</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="row d-flex flex-row justify-content-center">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <h5>Ad Details</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="col-12">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Ad Title" formControlName="ad_title">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-12">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Ad Sub Title" formControlName="ad_subtitle">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-12">
+                            <mat-form-field [style.width.%]="100">
+                                <input type="date" matInput placeholder="Ad Date" formControlName="ad_post_date">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-12">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="How many days ad shown?" formControlName="ad_visible_days">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-12" style="padding:15px;">
+                            <input type="file" placeholder="Banner Image" (change)="onFileSelect($event)">
+                        </div>
+
+
+                        <div class="col-12">
+                            <mat-form-field [style.width.%]="100">
+                                <mat-label>Status</mat-label>
+                                <mat-select name="status" formControlName="ad_status">
+                                    <mat-option *ngFor="let sts of ['Not Approved', 'Posted', 'Expired']" [value]="sts">
+                                        {{ sts }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="col-12">
+                            <mat-form-field [style.width.%]="100">
+                                <textarea matInput placeholder="Ad Content" rows="20"
+                                    formControlName="ad_content"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="col-12">
+                            <mat-card class="example-card">
+                                <img  [src]="adPostForm.value.ad_image_url" alt="Post" [style.width.%]="100"  >
+                            </mat-card>    
+                        </div>
+                    </div>
+                </div>
+                <mat-action-row>
+                    <button mat-button color="dark" (click)="adPostForm.reset()">Reset</button>
+                    <button mat-button color="primary" (click)="expand=false;">Close</button>
+                    <button mat-raised-button color="primary" class="pull-right" (click)="createAdPost()" [disabled]="!adPostForm.valid">
+                        Save
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+</section>

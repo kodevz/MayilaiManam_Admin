@@ -1,0 +1,288 @@
+
+<section>
+    <form [formGroup]="bizListingForm">
+
+        <mat-accordion class="example-headers-align">
+            <mat-expansion-panel [expanded]="expand">
+                <mat-expansion-panel-header class="expansion-header" (click)="expand=!expand">
+                   
+                    <mat-panel-description>
+                        <h5><strong>Create New Business Listing</strong></h5>
+                        <mat-icon>account_circle</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="row d-flex flex-row justify-content-center">
+                     <div class="col-md-12 d-flex justify-content-center">
+                         <h5>Basic Details</h5>
+                    </div>
+
+                     <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <img class="banner-image" [src]="bizListingForm.value.banner_image_url" (error)="errorHandler($event)" width="100%" height="300px" alt="Photo">
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center mt-5">
+
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Business Name" formControlName="title">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Shor Description" formControlName="short_description">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3" style="padding:15px;">
+                            <input type="file" placeholder="Banner Image" (change)="onFileSelect($event)">
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Slug" formControlName="slug">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Start From" [matDatepicker]="picker"
+                                    (focus)="picker.open()" readonly formControlName="since"  [required]="false">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Phone After" [ngxTimepicker]="timepicker"
+                                    formControlName="phone_afterhours">
+                                <ngx-material-timepicker #timepicker></ngx-material-timepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <mat-label>Category</mat-label>
+                                <mat-select name="category_id"
+                                    formControlName="category_id">
+                                    <mat-option *ngFor="let category of categories$ | async" [value]="category.id">
+                                        {{category.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2">
+                            <mat-form-field [style.width.%]="100">
+                                <mat-label>Status</mat-label>
+                                <mat-select name="status"
+                                    formControlName="status">
+                                    <mat-option *ngFor="let status of ['Active', 'Inactive', 'Shutdown', 'Temporary Closed', 'Open Soon']" [value]="status">
+                                        {{ status }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-1">
+                            <mat-checkbox name="is_verified" formControlName="is_verified" [(ngModel)]="isVerified">Is Verified?</mat-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field class="example-chip-list">
+                                <mat-chip-list #chipList aria-label="Categories Selection">
+                                    <mat-chip *ngFor="let category of choosesRelCategories" [selectable]="selectable"
+                                        [removable]="removable" (removed)="remove(category)">
+                                        {{category.name}}
+                                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                                    </mat-chip>
+                                    <input placeholder="Relevant Cateogries" #fruitInput
+                                        formControlName="relevant_categories" [formControl]="relCategoryCtrl"
+                                        [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                        [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)">
+                                </mat-chip-list>
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                                    <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
+                                    <ng-container *ngIf="!isLoading">
+                                        <mat-option *ngFor="let category of filteredCategories" [value]="category">
+                                            <span><b>{{category.id}}</b> ({{category.name}})</span>
+                                        </mat-option>
+                                    </ng-container>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-center">
+
+                    </div>
+
+                    <h5>Opening Times Of the Week</h5>
+                    <div formArrayName="opening_times"
+                        *ngFor="let item of bizListingForm.get('opening_times')?.controls; let i = index;"
+                        class="col-md-12">
+                        <div class="col-md-12 d-flex justify-content-center" [formGroupName]="i">
+                            <div class="col-2">
+
+                                <mat-form-field [style.width.%]="100">
+                                    <input matInput name="day" formControlName="weekday" readonly>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-2">
+                                <mat-form-field [style.width.%]="100">
+                                    <input type="time" matInput name="start" formControlName="start">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-2">
+                                <mat-form-field [style.width.%]="100">
+                                    <input type="time" matInput name="end" formControlName="end">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+           
+                <div class="row d-flex flex-row justify-content-center">
+                    <div class="col-md-12 d-flex justify-content-center">
+                         <h5>Address Details</h5>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-1">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="No." formControlName="door_no">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-5">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Address Line 1" formControlName="address_line_1">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="City" formControlName="city">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="State" formControlName="state">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Country" formControlName="country">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Zip Code" formControlName="zipcode">
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Mobile Number" formControlName="mobile_no">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Telephone" formControlName="telephone_no">
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Business Mail" formControlName="business_mail">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Web Site" formControlName="website">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Twitter" formControlName="twitter">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Facebook" formControlName="facebook">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Google Map Url" formControlName="google_map_url">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Latitude" formControlName="latitude">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field [style.width.%]="100">
+                                <input matInput placeholder="Longitude" formControlName="longitude">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                
+               
+                  <div class="row d-flex flex-row justify-content-center">
+                    <div class="col-md-12 d-flex justify-content-center">
+                         <h5>More about listing</h5>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                            <mat-form-field [style.width.%]="100">
+                                <textarea matInput placeholder="Write something about your listing..." rows="12"
+                                    formControlName="description"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="col-6">
+                          
+                        </div>
+                    </div>
+                </div>
+                <mat-action-row>
+                    <button mat-button color="dark" (click)="reset()">Reset</button>
+                    <button mat-button color="primary" (click)="expand=false">Close</button>
+                    <button mat-raised-button color="primary" class="pull-right" (click)="createBizListing()" [disabled]="!bizListingForm.valid">
+                        Save
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+</section>
