@@ -10,6 +10,7 @@ import { CreateBizListingModule } from './create-biz-listing/create-biz-listing.
 import { DialogModule } from 'primeng/dialog';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'src/app/components/multiselect/multiselect.component';
+import { PermissionDirective } from 'src/app/directives/permission.directive';
 
 @NgModule({
     

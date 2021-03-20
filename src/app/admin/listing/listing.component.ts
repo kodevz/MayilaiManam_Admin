@@ -12,6 +12,7 @@ import { Calendar } from 'primeng/Calendar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateBizListingComponent } from './create-biz-listing/create-biz-listing.component';
 import Swal from 'sweetalert2';
+import { GlobalService } from 'src/app/shared/global/global.service';
 
 @Component({
     selector: 'app-listing',
@@ -54,14 +55,22 @@ export class ListingComponent implements OnInit {
 
     items: any;
 
-
     bizListingForm: FormGroup;
+
+    sessionUser: any;
 
     @ViewChild('createBizListing', { static: false }) createBizListing : CreateBizListingComponent;
 
 
     constructor(private el: ElementRef, public datatableService: DatatableService,
-        public api: ApiService, public s2Service: Select2Service, public formBuilder: FormBuilder, public modalService: NgbModal) {
+        public api: ApiService, public s2Service: Select2Service, 
+        public formBuilder: FormBuilder, public modalService: NgbModal,
+        private globalService: GlobalService
+        ) {
+
+        this.globalService.sessionUser$.subscribe(user => {
+            this.sessionUser = user;
+        });
 
     }
 
@@ -150,11 +159,21 @@ export class ListingComponent implements OnInit {
                     remoteOptions: this.s2Service.setTable('listings').setValue('status').create()
                 }
             },
+            {
+                header: 'Verified', field: 'verified_status',
+                sortable: true, globalsearch: false, coloumnsearch: false, toggle: false,
+                filterOptions: <ColumnFilterOptions>{
+                    datatype: 'select2',
+                    groupId: '#columnMultiSelectFilter',
+                    filterkey: 'icrs_no',
+                    filterConstraint: 'in',
+                    remoteOptions: this.s2Service.setTable('listings_view').setLabel('verified_status').setValue('verified_status').create()
+                }
+            },
         ];
 
         this.dtPageOptions.columns = this.columns;
         this.selectedColumns = this.columns;
-
 
         this.bizListingForm = this.formBuilder.group({
             name: ['', Validators.required],

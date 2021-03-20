@@ -2,11 +2,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table'
 import { PageHeaderModule } from './modules';
+import { PermissionDirective } from '../directives/permission.directive';
 
 
 
 @NgModule({
-    declarations: [],
+    declarations: [
+        
+    ],
     imports: [
         CommonModule,
         TableModule,

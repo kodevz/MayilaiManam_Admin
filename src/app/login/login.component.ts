@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from '../shared/auth/auth.service';
 import { GlobalService } from '../shared/global/global.service';
 import { CookieService } from 'ngx-cookie-service';
-
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -18,27 +18,27 @@ import { CookieService } from 'ngx-cookie-service';
 export class LoginComponent implements OnInit {
 
     loginData: any = {
-        username : '',
-        password : ''
+        username: '',
+        password: ''
     }
 
     @ViewChild('f', { static: false }) loginForm: NgForm;
 
-    accessToken:string;
+    accessToken: string;
 
-    constructor( public router: Router, public api: ApiService, public authService: AuthService, public globalService: GlobalService, private cookieService: CookieService) {}
+    constructor(public router: Router, public api: ApiService, public authService: AuthService, public globalService: GlobalService, private cookieService: CookieService) { }
 
-    ngOnInit() {}
+    ngOnInit() { }
 
     onLoggedin() {
 
         this.loginData = this.setLoginJson(this.loginData);
-     
+
         localStorage.setItem('isLoggedin', 'true');
 
-        this.api.post('oauth', 'token', this.loginData).subscribe((resp : any) => {
+        this.api.post('oauth', 'token', this.loginData).subscribe((resp: any) => {
 
-            this.accessToken =  resp.access_token;
+            this.accessToken = resp.access_token;
 
             localStorage.setItem('__MMCLIENT__', resp.access_token);
 
@@ -46,41 +46,53 @@ export class LoginComponent implements OnInit {
             now.setTime(now.getTime() + (2 * 24 * 3600 * 1000));
             //now.setTime(now.getTime() + (15 * 1000));
 
-            this.cookieService.set(`__MMCLIENT__`,resp.access_token,now);
+            this.cookieService.set(`__MMCLIENT__`, resp.access_token, now);
 
             this.getAuthUser();
 
             setTimeout(() => {
-                this.authService.isAuthenticated() ? this.router.navigate(['category']) :  this.router.navigate(['/']);
-            },400)   
+                this.authService.isAuthenticated() ? this.router.navigate(['category']) : this.router.navigate(['/']);
+            }, 400)
 
-        },(error) => {
-
+        }, ({error}) => {
+            this.toastMsg({
+                icon: 'error',
+                title: 'Something went wrong. Please check username or password.',
+            })
         });
-        
+
     }
 
     getAuthUser() {
 
-        let headers =new Headers( {
+        let headers = new Headers({
             "Accept": "application/json",
-             "Content-Type": "application/json",
-            "Authorization" : "Bearer "+ localStorage.getItem('__MMCLIENT__')
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem('__MMCLIENT__')
         })
-        
-        this.api.get('api', 'user', headers).subscribe((resp:any) => {
+
+        this.api.get('api', 'user', headers).subscribe((resp: any) => {
             localStorage.setItem('sessionUser', JSON.stringify(resp));
             this.globalService.sessionUser$.next(resp);
-        })
-        
+        });
+
     }
 
     setLoginJson(longinData) {
-		let formObject = longinData
-		formObject.client_secret = environment.clientSecret
-		formObject.grant_type = environment.grantType
-		formObject.client_id = environment.clientId
-		formObject.scope = ""
-		return formObject
+        let formObject = longinData
+        formObject.client_secret = environment.clientSecret
+        formObject.grant_type = environment.grantType
+        formObject.client_id = environment.clientId
+        formObject.scope = ""
+        return formObject
+    }
+
+    toastMsg(toastConfig) {
+        const config = {
+            position: 'center',
+            showConfirmButton: false,
+            timer: 2000
+        };
+        Swal.fire({ ...config, ...toastConfig });
     }
 }

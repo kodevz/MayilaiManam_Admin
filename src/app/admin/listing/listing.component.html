@@ -47,8 +47,8 @@
                                         [rows]="dtPageOptions.rows" [totalRecords]="dtPageOptions.totalElements"
                                         sortMode="multiple" [scrollable]="false" [virtualScroll]="false"
                                         [style]="{width:'100%'}" [virtualRowHeight]="34" [loading]="loading"
-                                        dataKey="name" stateKey="{{ stateKey }}" stateStorage="local">
-
+                                        dataKey="name" >
+<!-- stateKey="{{ stateKey }}" stateStorage="local" -->
                                         <ng-template pTemplate="header" let-columns>
                                             <tr>
                                                 <th rowspan="2">SNO</th>
@@ -103,11 +103,17 @@
                                                     </button>
                                                 </td>
                                                 <td>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-{{ rowData.is_verified == 1 ? 'success' : 'danger'}}">
+                                                        {{ rowData.verified_status }}
+                                                    </button>
+                                                </td>
+                                                <td>
                                                     <button type="button" class="btn btn-sm btn-dark"
                                                         (click)="createBizListing.expand=true;createBizListing.listingData=rowData;">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </button>
-
+<!-- [appPer]="sessionUser.roles"  -->
                                                     <button type="button" class="btn btn-sm btn-danger"
                                                         (click)="deleteRow(rowData)">
                                                         <i class="fa fa-trash"></i> Delete

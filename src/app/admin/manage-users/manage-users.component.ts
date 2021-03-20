@@ -12,6 +12,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { routerTransition } from 'src/app/router.animations';
 import { CreateManageUsersComponent } from './create-manage-users/create-manage-users.component';
 import { ManageUserService } from 'src/app/shared/manager-user/manage-user.service';
+import { GlobalService } from 'src/app/shared/global/global.service';
 @Component({
     selector: 'app-manage-users',
     templateUrl: './manage-users.component.html',
@@ -31,13 +32,13 @@ export class ManageUsersComponent implements OnInit {
 
     readonly rowsLength = 15;
 
-    @ViewChild('usersTable', {static: false}) private _usersTable: Table;
+    @ViewChild('usersTable', { static: false }) private _usersTable: Table;
 
     //@ViewChild('addCategoryDiv') private addCategoryDiv: ElementRef;
 
     //showCategoryForm: boolean = false;
 
-    @ViewChild('createUserComp', { static: false }) createUserComp : CreateManageUsersComponent;
+    @ViewChild('createUserComp', { static: false }) createUserComp: CreateManageUsersComponent;
 
     @ViewChildren('columnMultiSelectFilter') mutliSelectFilter: QueryList<MultiselectComponent>;
 
@@ -62,21 +63,23 @@ export class ManageUsersComponent implements OnInit {
     closeResult = '';
 
     errorMsgs: { [key: string]: any };
+
+    sessionUser: any;
+
     constructor(public http: HttpClient, private el: ElementRef, public datatableService: DatatableService,
         public api: ApiService, public s2Service: Select2Service, public formBuilder: FormBuilder,
-        public manageUserService: ManageUserService,
+        public manageUserService: ManageUserService, private globalService: GlobalService,
         public modalService: NgbModal) {
 
-            
+        this.globalService.sessionUser$.subscribe(user => {
+            this.sessionUser = user;
+        });
+
     }
 
-
     ngOnInit() {
-
-
         this.dtPageOptions.rows = 15;
         this.columns = [
-
             {
                 header: 'Name', field: 'full_name',
                 sortable: true, globalsearch: false, coloumnsearch: false, toggle: false,
@@ -137,9 +140,7 @@ export class ManageUsersComponent implements OnInit {
 
         this.dtPageOptions.columns = this.columns;
         this.selectedColumns = this.columns;
-
         this.createFormBuilder();
-
     }
 
     createFormBuilder() {
@@ -156,9 +157,6 @@ export class ManageUsersComponent implements OnInit {
             active: [''],
         });
     }
-
-
-
 
     initUsers(dtEvent: DTPageOptions) {
         this.loading = true;
@@ -178,11 +176,10 @@ export class ManageUsersComponent implements OnInit {
         });
     }
 
-
     reload() {
         this.mutliSelectFilter.toArray().map((comp) => comp.reset())
         this._usersTable.reset();
     }
 
-    
+
 }

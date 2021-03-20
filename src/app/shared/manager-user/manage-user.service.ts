@@ -32,4 +32,12 @@ export class ManageUserService {
         }
         return this.http.post<any>(ApiHosts['api'] + endpoint, data, this.reqOpts);
     }
+
+    public deleteUser(id) {
+        return this.http.delete(`${ApiHosts['api']}users/${id}/delete`, this.reqOpts);
+    }
+
+    public getUserRoles() {
+        return this.http.get(`${ApiHosts['web']}/user/roles`);
+    }
 }

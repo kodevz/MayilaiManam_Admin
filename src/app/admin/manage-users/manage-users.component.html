@@ -105,6 +105,10 @@
                                                         (click)="createUserComp.user=rowData.modal_data;createUserComp.expand=true;">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </button>
+                                                    <button [appPer] ="sessionUser.roles" type="button" class="btn btn-sm btn-danger ml-3"
+                                                        (click)="createUserComp.deleteUser(rowData.id)">
+                                                        <i class="fa fa-trash"></i> Delete
+                                                    </button>
                                                 </td>
                                             </tr>
                                         </ng-template>

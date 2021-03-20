@@ -15,6 +15,7 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { CookieService } from 'ngx-cookie-service';
+import { PermissionDirective } from './directives/permission.directive';
 
 enableProdMode();
 @NgModule({
@@ -30,7 +31,9 @@ enableProdMode();
         NgxMaterialTimepickerModule,
         NgMultiSelectDropDownModule.forRoot()
     ],
-    declarations: [AppComponent],
+    declarations: [
+        AppComponent
+    ],
     providers: [
         AuthGuard,
         ApiService,

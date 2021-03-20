@@ -8,6 +8,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CreateManageUsersModule } from './create-manage-users/create-manage-users.module';
 import { MultiSelectModule } from 'src/app/components/multiselect/multiselect.component';
+import { PermissionDirective } from 'src/app/directives/permission.directive';
 
 @NgModule({
     imports: [

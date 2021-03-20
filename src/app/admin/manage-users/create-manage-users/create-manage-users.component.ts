@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ManageUserService } from 'src/app/shared/manager-user/manage-user.service';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import Swal from 'sweetalert2';
+import { consoleTestResultHandler } from 'tslint/lib/test';
 
 @Component({
     selector: 'create-manage-users',
@@ -30,6 +31,7 @@ export class CreateManageUsersComponent implements OnInit {
     userForm: FormGroup;
 
     bloodGroups$: Observable<any>;
+    userRoles = [];
 
     expand: boolean = false;
 
@@ -73,10 +75,15 @@ export class CreateManageUsersComponent implements OnInit {
             email: ['', Validators.required],
             password: [''],
             c_password: [''],
-            //roles: ['', Validators.required],
+            roles: ['', Validators.required],
             confirmed: [''],
             confirmation_code: [''],
             active: [''],
+        });
+
+
+        this.manageUserService.getUserRoles().subscribe((data: any[]) => {
+            this.userRoles = data;
         });
     }
 
@@ -88,7 +95,7 @@ export class CreateManageUsersComponent implements OnInit {
     }
 
     createUser() {
-
+        console.log(this.userForm.value);
         this.manageUserService.userPost(this.userForm.value).subscribe((resp: any) => {
             this.onDataTableReload.emit(true);
             this.userForm.reset();
@@ -110,16 +117,37 @@ export class CreateManageUsersComponent implements OnInit {
         this.userForm.reset();
     }
 
-    successMsg() {
+    deleteUser(id) {
+
+         Swal.fire({
+            title: 'Are you sure, want to delete this user?',
+            text: 'You will not undo the user.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result:any)=> {
+            if (!result.value) return;
+            this.manageUserService.deleteUser(id).subscribe((resp: any) => {
+                this.onDataTableReload.emit(true);
+                this.userForm.reset();
+                this.successMsg(resp.msg);
+            }, () => this.errorMsg());
+        })
+
+       
+    }
+
+    successMsg(msg?: string) {
         Swal.fire({
             position: 'center',
             icon: 'success',
-            title: 'Successfully saved',
+            title: msg ? msg : 'Successfully saved',
             showConfirmButton: false,
             timer: 1500
         })
     }
-    
+
     errorMsg() {
         Swal.fire({
             position: 'center',

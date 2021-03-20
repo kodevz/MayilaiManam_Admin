@@ -57,7 +57,11 @@ export class AuthService {
         localStorage.removeItem('__MMCLIENT__');
         localStorage.removeItem('sessionUser');
         this.cookieService.delete('__MMCLIENT__');
-        this.router.navigate(['/']);
+        
+        setTimeout(() => {
+            this.router.navigate(['/']);
+        }, 400);
+        
 
         // this.notifyService.onLogoutConfirmation(
         //     "Logout Your Session?",
